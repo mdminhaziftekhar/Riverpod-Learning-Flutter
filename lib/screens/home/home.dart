@@ -19,13 +19,13 @@ class HomeScreen extends ConsumerWidget {
         data: (data) => Center(
           child: Text(
             data.toString(),
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 25,
             ),
           ),
         ),
         error: ((error, stackTrace) => Text(error.toString())),
-        loading: () => Center(
+        loading: () => const Center(
           child: CircularProgressIndicator(),
         ),
       ),
