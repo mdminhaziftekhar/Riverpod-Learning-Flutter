@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_learning/screens/home/home.dart';
 
 final nameProvider = Provider<String>((ref) {
-  return 'Hello Minhaz';
+  return 'Minhaz welcome to Eigooo';
 });
 
 void main() {
@@ -21,15 +22,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MaterialApp(
-        home: Scaffold(
-          body: SafeArea(
-            child: Center(
-              child: Text('Riverpod tutorial'),
-            ),
-          ),
-        ),
-      ),
+      home: const HomeStateful(),
     );
   }
 }
