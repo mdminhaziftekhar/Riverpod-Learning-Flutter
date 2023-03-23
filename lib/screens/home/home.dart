@@ -4,20 +4,29 @@ import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_learning/main.dart';
 import 'package:riverpod_learning/providers/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final streamData = ref.watch(streamProvider);
+
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: Consumer(
-            builder: ((context, ref, child) {
-              final name = ref.watch(nameProvider);
-              return Text(name);
-            }),
+      appBar: AppBar(
+        title: const Text('Stream Provider'),
+      ),
+      body: streamData.when(
+        data: (data) => Center(
+          child: Text(
+            data.toString(),
+            style: TextStyle(
+              fontSize: 25,
+            ),
           ),
+        ),
+        error: ((error, stackTrace) => Text(error.toString())),
+        loading: () => Center(
+          child: CircularProgressIndicator(),
         ),
       ),
     );
@@ -45,6 +54,8 @@ class _HomeStatefulState extends ConsumerState<HomeStateful> {
 
     final counter = ref.watch(counterStateNotifierProvider);
 
+    final userData = ref.watch(userDataProvider);
+
     ref.listen(counterStateNotifierProvider, ((previous, next) {
       if (next == 5) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -66,19 +77,40 @@ class _HomeStatefulState extends ConsumerState<HomeStateful> {
           )
         ],
       ),
-      body: Center(
-        child: Text(
-          '$counter',
-          style: TextStyle(fontSize: 30),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          //ref.read(counterProvider.notifier).update((state) => state + 1);
-          ref.read(counterStateNotifierProvider.notifier).increment();
-        },
-        child: const Icon(Icons.add),
-      ),
+      body: userData.when(data: (data) {
+        return ListView.builder(
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text('${data[index].firstName} ${data[index].lastName}'),
+              subtitle: Text(data[index].email),
+              leading: CircleAvatar(
+                child: Image.network(data[index].avatar),
+              ),
+            );
+          },
+        );
+      }, error: (error, stackTree) {
+        return Text(error.toString());
+      }, loading: () {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }),
+
+      // body: Center(
+      //   child: Text(
+      //     '$counter',
+      //     style: TextStyle(fontSize: 30),
+      //   ),
+      // ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     //ref.read(counterProvider.notifier).update((state) => state + 1);
+      //     ref.read(counterStateNotifierProvider.notifier).increment();
+      //   },
+      //   child: const Icon(Icons.add),
+      // ),
     );
   }
 }
